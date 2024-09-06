@@ -1,0 +1,93 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.15.2
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
+---
+
+```{r}
+library("sf")
+library("spMC")
+library("stars")
+library("terra")
+library("mapview")
+require("cleanRfield")
+library("FIELDimageR")
+#require("FIELDimageR.Extra")
+```
+
+```{r}
+## parameters
+basefolder = "/home/filippo/Documents/polyploid_breeding/drone_phenotyping/analisi_immagini/giulia_example/"
+repofolder = "polyploidbreeding/temp_scripts"
+
+source(file.path(basefolder, repofolder, "script_RGB/support_scripts/fieldIndexRedEdgeMXdual_RGB.R"))
+source(file.path(basefolder, repofolder, "script_RGB/support_scripts/fieldInfoRedEdgeMXdual_RGB.R"))
+```
+
+```{r}
+setCores(4)
+```
+
+## 1) Reading raster, uploading the mosaic
+
+```{r}
+inpfile = "clippata_RGB_3_row_fiorenzuola.tif"
+fname = file.path(basefolder, inpfile)
+EX1.dus <- rast(fname)
+EX1.dus
+```
+
+## 2) remove background (e.g. soil)
+
+```{r}
+EX1.RemSoil <- fieldMask(mosaic = EX1.dus, Red = 1, Green = 2, Blue = 3, 
+                         index = "HUE", ## Filippo: what is this?
+                         cropValue=0, 
+                         cropAbove=TRUE, 
+                         plot=FALSE)
+```
+
+## 3) Reading the shapefile
+
+```{r}
+inpfile = "Shapefile_3_rows_final.shp"
+fname = file.path(basefolder, inpfile)
+ShapeFile <- rgdal::readOGR(dsn = fname) # Option 01
+ShapeFile
+```
+
+### Visualizing data
+
+```{r}
+plotRGB(FIELDimageR:::RGB.rescale(EX1.dus,1))
+plot(ShapeFile, border="green",add=TRUE) 
+```
+
+## 4) Begin calculating the vegetation indices
+
+```{r}
+## parameters (vegetation indices and summary functions)
+
+index_list <- c("BI","SCI","GLI","SI","VARI","HUE","BGI", "NGRDI")
+my_summary <- "function(x, na.rm) c(mean = mean(x, na.rm=na.rm), sd = sd(x, na.rm = na.rm), 
+min = min(x, na.rm=na.rm), max = max(x, na.rm=na.rm), 
+median = median(x,na.rm = na.rm), q2=quantile(x,probs=0.2,na.rm=na.rm), 
+q25=quantile(x,probs=0.25,na.rm=na.rm), q5=quantile(x,probs=0.5,na.rm=na.rm), 
+q75=quantile(x,probs=0.75,na.rm=na.rm), q98=quantile(x,probs=0.98,na.rm=na.rm))"
+```
+
+```{r}
+EX1.Indices1 <- fieldIndexRedEdgeMXdual_RGB(mosaic = EX1.RemSoil$newMosaic, 
+                                       Red = 1, Green = 2, Blue = 3,
+                                       index = index_list[1],
+                                       myIndex = NULL, # "(Blue/Red)"
+                                       plot = TRUE) #
+```
