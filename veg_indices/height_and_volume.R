@@ -49,6 +49,11 @@ dem = fread(fname)
 dem$date = gsub(config$pattern,"",dem$dataset)
 dem$date = as.Date(dem$date, "%y%m%d")
 
+# temp <- dem |>
+#   group_by(dataset) |>
+#   summarise(avg_height = mean(altezza_mean),
+#             avg_sum = mean(summation))
+
 dates = sort(unique(dem$date))
 print(paste("Selecting", dates[1], "as baseline for plant height"))
 
@@ -61,11 +66,31 @@ dem <- dem |>
   mutate(altezza_mean = altezza_mean - baseline_height)
 
 #calcolo volume pianta
-dem$baseline_volume = dem_baseline$summation[match(dem$gid, dem_baseline$gid)]
 dem <- dem |>
-  mutate(summation = summation - baseline_volume)
+  group_by(gid) |>
+  mutate(max_px = max(pixels), coef_px = max_px / pixels)
 
-dem <- dem |> select(-c(baseline_height, baseline_volume, date))
+dem <- dem |> 
+  mutate(summation_norm = coef_px*summation)
+
+dem_baseline <- dem_baseline |>
+  group_by(gid) |>
+  mutate(max_px = max(pixels), coef_px = max_px / pixels, summation_norm = coef_px*summation)
+
+dem$baseline_volume = dem_baseline$summation_norm[match(dem$gid, dem_baseline$gid)]
+
+dem <- dem |>
+  mutate(summation = summation_norm - baseline_volume)
+
+# temp2 <- dem |>
+#   group_by(dataset) |>
+#   summarise(avg_height_norm = mean(altezza_mean),
+#             avg_sum_norm = mean(summation))
+# 
+# temp <- temp |> inner_join(temp2, by = "dataset")
+# fwrite(x = temp, file = "barley/dem_stats.csv")
+
+dem <- dem |> select(-c(baseline_height, baseline_volume, date, summation_norm, coef_px, max_px))
 
 fname = file.path(outdir, "normalised_hight_and_volume.csv")
 fwrite(x = dem, file = fname)
