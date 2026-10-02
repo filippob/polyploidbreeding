@@ -8,3 +8,9 @@ The folder `veg_indices` contains the scripts to process and analyse vegetation 
  - correlate vegetation indexes with phenotypes
  - predict phenotypes based on vegetation indexes
  - assess the effect of thresholding
+
+1. split wheat index data into two subsets: i) *durum wheat*, 2) *bread wheat*
+2. merge index datasets from different sensors
+3. integrate phenotypic data
+4. correlations
+5. predictions
