@@ -6,6 +6,7 @@ from the orthomosaics collected during the drone phenotyping experiment of the [
 ## Open questions
 
 1. **thresholding**: do we want to use thresholding when calculating the vegetation indices? If so, which threshold on which indices?
-  - a separate threshold for each index?
-  - a fixed threshold on one index for all other indices?
-  - no thresholds at all? 
+    - a separate threshold for each index?
+    - a fixed threshold on one index for all other indices?
+    - no thresholds at all?
+2. aaa
