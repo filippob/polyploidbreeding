@@ -25,10 +25,10 @@ if (length(args) == 1){
   config = NULL
   config = rbind(config, data.frame(
     base_folder = "~/Documents/polyploid_breeding/drone_phenotyping/vegetation_indices",
-    input_folder = "barley/indices/",
+    input_folder = "wheat/data/indices",
     outdir = 'Analysis/merged_data',
-    species = "barley",
-    missing_threshold = 0.25, ## a quarter of the data is missing
+    species = "wheat",
+    missing_threshold = 0.75, ## a quarter of the data is missing
     force_overwrite = FALSE
   ))
   
@@ -82,7 +82,7 @@ therm <- therm[, vec, with = FALSE]
 
 ## dem
 writeLines(" - reading DEM indices")
-fname = list_of_files[grepl("Dem", x = list_of_files)]
+fname = list_of_files[grepl("Dem|dem", x = list_of_files)]
 dem = fread(fname)
 dem <- dem |> select(dataset, gid, altezza_mean, altezza_median, altezza_std, altezza_max, altezza_min, summation)
 dem$dataset = gsub("_.*$","",dem$dataset)
@@ -96,7 +96,7 @@ temp <- purrr::reduce(list(rgb, multi, therm, dem), dplyr::left_join, by = c("gi
 nrec = nrow(temp)
 
 ## removing columns (indices) with more than 50% missing data
-vec = (100*(colSums(is.na(temp))/nrec) < config$missing_threshold)
+vec = (100*(colSums(is.na(temp))/nrec) < 100*config$missing_threshold)
 temp <- temp[, vec, with=FALSE]
 
 writeLines(" - writing out merged file")
