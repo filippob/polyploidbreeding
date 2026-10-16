@@ -23,10 +23,11 @@ if (length(args) == 1){
   #as follows
   config = NULL
   config = rbind(config, data.frame(
-    base_folder = "~/Documents/polyploid_breeding/",
-    input_folder = "drone_phenotyping/vegetation_indices/barley/indices/",
-    outdir = 'drone_phenotyping/Analysis/merged_data',
+    base_folder = "~/Documents/polyploid_breeding/drone_phenotyping/vegetation_indices",
+    input_folder = "barley/indices/",
+    outdir = 'Analysis/merged_data',
     species = "barley",
+    missing_threshold = 0.25, ## a quarter of the data is missing
     force_overwrite = FALSE
   ))
   
@@ -48,38 +49,53 @@ print(paste(list_of_files, collapse = ","))
 writeLines(" - reading RGB indices")
 fname = list_of_files[grepl("RGB", x = list_of_files)]
 rgb = fread(fname)
-rgb <- rgb |> select(dataset, gid, VARIrgb_mean, GLI_mean, BGI_mean, HUE_mean)
+rgb <- rgb |> select(dataset, gid, VARIrgb_mean, VARIrgb_median, VARIrgb_std, VARIrgb_min, VARIrgb_max, 
+                     GLI_mean, GLI_median, GLI_std, GLI_max, GLI_min, 
+                     BGI_mean, BGI_median, BGI_std, BGI_max, BGI_min,
+                     HUE_mean, HUE_median, HUE_std, HUE_max, HUE_min)
 rgb$dataset = gsub("_.*$","",rgb$dataset)
+
+vec = (colSums(is.na(rgb))/nrow(rgb) < config$missing_threshold)
+rgb <- rgb[, vec, with = FALSE]
 
 ## MULTISPECTRAL
 writeLines(" - reading Multispectral indices")
 fname = list_of_files[grepl("multi", x = list_of_files)]
 multi = fread(fname)
-multi <- multi |> select(dataset, gid, NDVI_mean, GNDVI_mean, NDRE_mean, CVI_mean, 
-                         EVI_mean, CIG_mean, PSRI_mean, RVI_mean, TVI_triangular_mean)
+multi <- multi |> 
+  select(-c(type, ortho_files, shapes_file, channels, centroid_x, centroid_y, threshold, pixels, pixels_after_threshold))
 multi$dataset = gsub("_.*$","",multi$dataset)
+
+vec = (colSums(is.na(multi))/nrow(multi) < config$missing_threshold)
+multi <- multi[, vec, with = FALSE]
 
 ## thermal
 writeLines(" - reading Thermal indices")
 fname = list_of_files[grepl("term", x = list_of_files)]
 therm = fread(fname)
-therm <- therm |> select(dataset, gid, temperature_mean)
+therm <- therm |> select(dataset, gid, temperature_mean, temperature_median, temperature_std, temperature_max, temperature_min)
 therm$dataset = gsub("_.*$","",therm$dataset)
+
+vec = (colSums(is.na(therm))/nrow(therm) < config$missing_threshold)
+therm <- therm[, vec, with = FALSE]
 
 ## dem
 writeLines(" - reading DEM indices")
 fname = list_of_files[grepl("Dem", x = list_of_files)]
 dem = fread(fname)
-dem <- dem |> select(dataset, gid, altezza_mean, summation)
+dem <- dem |> select(dataset, gid, altezza_mean, altezza_median, altezza_std, altezza_max, altezza_min, summation)
 dem$dataset = gsub("_.*$","",dem$dataset)
 
+vec = (colSums(is.na(dem))/nrow(dem) < config$missing_threshold)
+dem <- dem[, vec, with = FALSE]
+
+########## MERGING ####################
 writeLines(" - merging datasets ... ")
 temp <- purrr::reduce(list(rgb, multi, therm, dem), dplyr::left_join, by = c("gid","dataset"))
-
 nrec = nrow(temp)
 
 ## removing columns (indices) with more than 50% missing data
-vec = (100*(colSums(is.na(temp))/nrec) < 50)
+vec = (100*(colSums(is.na(temp))/nrec) < config$missing_threshold)
 temp <- temp[, vec, with=FALSE]
 
 writeLines(" - writing out merged file")
