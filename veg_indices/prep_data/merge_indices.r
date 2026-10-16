@@ -7,6 +7,7 @@
 
 library("purrr")
 library("dplyr")
+library("writexl")
 library("tidyverse")
 library("data.table")
 
@@ -99,10 +100,13 @@ vec = (100*(colSums(is.na(temp))/nrec) < config$missing_threshold)
 temp <- temp[, vec, with=FALSE]
 
 writeLines(" - writing out merged file")
-fname = paste("merged_indices_", config$species, ".csv", sep="")
-fwrite(x = temp, 
-       file = file.path(config$base_folder, config$outdir, fname),
-       sep = ","
-       )
+# fname = paste("merged_indices_", config$species, ".csv", sep="")
+# fwrite(x = temp, 
+#        file = file.path(config$base_folder, config$outdir, fname),
+#        sep = ","
+#        )
+
+fname = paste("merged_indices_", config$species, ".xlsx", sep="")
+write_xlsx(x = temp, path = file.path(config$base_folder, config$outdir, fname))
 
 print("DONE!")
