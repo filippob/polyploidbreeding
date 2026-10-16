@@ -12,3 +12,13 @@ from the orthomosaics collected during the drone phenotyping experiment of the [
 2. **data matching**: do we have complete correspondence between indices/plots one one hand, and genotypes/phenotypes on the other? What if we have a few mismatches? Why?
 3. **thermal sensor**: what do we do with temperatures? Shall we use the difference from the temperature of the day, as measured by the weather service?
 4. **DEM file**: how do we treat heights and volumes?
+
+## Operational workflow
+
+### Input data
+#### Barley
+- phenotypes: `Pheno_Fiorenzuola_2024_12_19_WB_semina 2023.csv`
+- corss reference: Fiorenzuola_gid_accession.csv
+  
+1. [merge_indices.r](veg_indices/prep_data/merge_indices.r): this creates a combined file with all indices (from all sensors, from all flights) per species
+2. 
