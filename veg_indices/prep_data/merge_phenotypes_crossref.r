@@ -20,10 +20,10 @@ if (length(args) == 1){
   config = NULL
   config = rbind(config, data.frame(
     basefolder = "~/Documents/polyploid_breeding/drone_phenotyping/vegetation_indices",
-    phenotype_file = "barley/phenotypes/Pheno_Fiorenzuola_2024_12_19_WB_semina 2023.csv",
-    cross_ref_file = "barley/phenotypes/Fiorenzuola_gid_accession.csv",
+    phenotype_file = "wheat/data/Phenotypic_data_SIS_Crop_season23-24_unito.xlsx",
+    cross_ref_file = "wheat/data/GD_ID-Code_SL.csv",
     outdir = 'Analysis/merged_data',
-    species = "barley",
+    species = "wheat",
     missing_threshold = 0.75, ## a quarter of the data is missing
     force_overwrite = FALSE
   ))
@@ -48,8 +48,8 @@ if (extension == "csv") {
 print("Remove unnecessary columns: LOCATION, trial, TESI, REP, GENOTYPE CODE")
 if (config$species == "wheat") {
   
-  phenotypes <- phenotypes |> select(-c(LOCATION, trial, TESI, REP, `GENOTYPE CODE`))
-  
+  phenotypes <- phenotypes |> select(-c(LOCATION, trial, TESI, REP, `GENOTYPE CODE`, ...20, ...19))
+  phenotypes <- phenotypes |> rename(accession = code)
 } else if (config$species == "barley") {
   
   phenotypes <- phenotypes |> select(-c(Row, Column, rep))
@@ -65,7 +65,7 @@ if (extension == "csv") {
   crossref <- readxl::read_xlsx(fname, sheet = 1)
 } else stop("NOT VALID FILE EXTENSION")
 
-if (config$species == "wheat") crossref <- crossref |> select(-field)
+if (config$species == "wheat") crossref <- crossref |> select(-field) |> rename(accession = code)
 
 ###########################
 ## DUPLICATES
