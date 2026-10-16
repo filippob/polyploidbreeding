@@ -144,8 +144,21 @@ if(ndupl_other == 0) {
 }
 
 writeLines(" - writing our results")
-fname = paste("phenotypes_gid_", config$species, ".xlsx", sep="")
-write_xlsx(x = merged_dataset, path = file.path(config$basefolder, config$outdir, fname))
+
+if (config$species == "wheat") {
+  
+  for (w in unique(merged_dataset$species)) {
+    print(w)
+    temp <- merged_dataset |> filter(species == w)
+    fname = paste("phenotypes_gid_", w, ".xlsx", sep="")
+    write_xlsx(x = temp, path = file.path(config$basefolder, config$outdir, fname))
+    }
+} else {
+  
+  fname = paste("phenotypes_gid_", config$species, ".xlsx", sep="")
+  write_xlsx(x = merged_dataset, path = file.path(config$basefolder, config$outdir, fname))
+}
+
 
 
 
