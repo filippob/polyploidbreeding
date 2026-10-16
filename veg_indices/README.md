@@ -34,3 +34,9 @@ from the orthomosaics collected during the drone phenotyping experiment of the [
 ---
 
 ## Next steps
+
+- calculate and interpret all correlations
+- develop an optimised vegetation index from all sensors using [drone2report](https://github.com/ne1s0n/drone2report) and correlate this index with all phenotype (per species)
+- use all indices together in a multiple regression model (or other machine/statistical learning models) to predict the phenotypes
+
+ 
