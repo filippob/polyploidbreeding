@@ -18,11 +18,11 @@ if (length(args) == 1){
   #as follows
   config = NULL
   config = rbind(config, data.frame(
+    species = "barley",
     basefolder = "~/Documents/polyploid_breeding/drone_phenotyping/vegetation_indices",
-    index_file = "Analysis/merged_data/merged_indices_wheat.xlsx",
-    phenotype_file = "Analysis/merged_data/phenotypes_gid_DW.xlsx",
+    index_file = "Analysis/merged_data/merged_indices_barley.xlsx",
+    phenotype_file = "Analysis/merged_data/phenotypes_gid_barley.xlsx",
     outdir = 'Analysis/correlations',
-    species = "WW",
     flight = "all", ## this can be all
     method = "pearson", ## pearson, spearman, kendall
     missing_threshold = 0.5, ## a quarter of the data is missing
@@ -38,10 +38,12 @@ dir.create(file.path(config$basefolder, config$outdir, config$species), showWarn
 
 writeLines(" - reading index file")
 fname = file.path(config$basefolder, config$index_file)
+print(fname)
 indices = readxl::read_xlsx(fname)
 
 writeLines(" - reading phenotype file")
 fname = file.path(config$basefolder, config$phenotype_file)
+print(fname)
 phenotypes = readxl::read_xlsx(fname)
 
 if (config$flight != "all") {
