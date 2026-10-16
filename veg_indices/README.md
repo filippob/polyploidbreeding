@@ -18,9 +18,14 @@ from the orthomosaics collected during the drone phenotyping experiment of the [
 ### Input data
 #### Barley
 - phenotypes: `Pheno_Fiorenzuola_2024_12_19_WB_semina 2023.csv`
-- cross reference: Fiorenzuola_gid_accession.csv
+- cross reference: `Fiorenzuola_gid_accession.csv`
 - vegetation indices: indexes_RGB_F_complete.csv, indexes_multi_complete_da_0_1_F.csv, indexes_term_F.csv, indexes_F_Dem.csv
-  
+
+#### Wheat
+- phenotypes: `Phenotypic_data_SIS_Crop_season23-24_unito.xlsx`
+- cross reference:
+- vegetation indices: 
+
 ### Scripts
 1. [merge_indices.r](veg_indices/prep_data/merge_indices.r): this creates a combined file with all indices (from all sensors, from all flights) per species
 2. 
