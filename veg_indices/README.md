@@ -30,3 +30,7 @@ from the orthomosaics collected during the drone phenotyping experiment of the [
 1. [merge_indices.r](veg_indices/prep_data/merge_indices.r): this creates a combined file with all indices (from all sensors, from all flights) per species
 2. [merge_phenotypes_crossref.r](veg_indices/prep_data/merge_phenotypes_crossref.r): this adds the `gid` (field plot ID) to the file of phenotypes (to allow merging phenotypes and indices)
 3. [correlations.r](veg_indices/correlations.r): this calculates correlations (Pearson, Spearman, Kendall) between vegetation indices and phenotypes, for a specific flight (data) or for all flights
+
+---
+
+## Next steps
