@@ -23,9 +23,9 @@ from the orthomosaics collected during the drone phenotyping experiment of the [
 
 #### Wheat
 - phenotypes: `Phenotypic_data_SIS_Crop_season23-24_unito.xlsx`
-- cross reference:
-- vegetation indices: 
+- cross reference: `GID_Campi Prova_2024_PolyploidBreeding.xlsx`
+- vegetation indices: `indexes_nuovi_SL_complete_RGB.csv`, `indexes_SL_multi_nuovo_0.csv`, `indexes_term_SL.csv`, `indexes_dem_SL.csv`
 
 ### Scripts
 1. [merge_indices.r](veg_indices/prep_data/merge_indices.r): this creates a combined file with all indices (from all sensors, from all flights) per species
-2. 
+2. [merge_phenotypes_crossref.r](veg_indices/prep_data/merge_phenotypes_crossref.r)
